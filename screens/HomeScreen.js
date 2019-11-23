@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View,TouchableOpacity,Image } from 'react-native';
+import { StyleSheet, Text, View,TouchableOpacity,Image, Button } from 'react-native';
 import { AndroidStorage } from '../services/AndroidStorage';
 
 import {SensorView} from '../components/SensorView'
@@ -7,7 +7,7 @@ import {SensorView} from '../components/SensorView'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#454147',
+    // backgroundColor: '#454147',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -18,11 +18,17 @@ const storage = new AndroidStorage();
 export class HomeScreen extends React.Component {
     state = { deviceIP: null }
     componentWillMount() {
-      console.log('componentWillMount')
       storage.readStoredSettings("DeviceIP").then((deviceIP)=>{
         console.log("IP from storage: ", deviceIP);
         this.setState({deviceIP: deviceIP});
       })
+    }
+
+    componentDidMount() {
+      const {deviceIP} = this.state;
+      if (!deviceIP) {
+        this.props.navigation.navigate('Settings');
+      }
     }
   
     onIpChange=(newIP)=>{
@@ -56,6 +62,10 @@ export class HomeScreen extends React.Component {
       }
     }
   
+    showSettings=()=>{
+      this.props.navigation.navigate('Settings');
+    }
+
     render() {
       const {deviceIP} = this.state;
       if (deviceIP!==null){
@@ -68,7 +78,11 @@ export class HomeScreen extends React.Component {
       }
       else {
         return (
-          <Text>Loading settings...</Text>
+          <View style={styles.container}>
+          
+            <Button title="Please, configure!" onPress={this.showSettings}></Button>
+          </View>
+          
         )
       }
         
